@@ -24,7 +24,17 @@ class UnitTests {
 //
 //    }
 
-    //- verify safe handling of group limit reduction when more members are in
+    /**
+     * verify safe handling of group limit reduction when more members are in
+     */
+    @Test
+    fun `validate members size if group limit lowers`() {
+        val limit = 3
+        val event = CoffeeEvent(name = "test event").apply { groupLimit = limit }
+        for (i in 0..limit) event.addMember(User(name = "user:$i"))
+        event.groupLimit = 1
+        assert(event.members.size == event.groupLimit)
+    }
 
     /**
      * Check that users added to events are in the interest list
@@ -45,7 +55,8 @@ class UnitTests {
     @Test
     fun `Verify user can not join a full event`() {
         val limit = 5
-        CoffeeEvent(name = "test event", groupLimit = limit - 1).run {
+        CoffeeEvent(name = "test event").run {
+            groupLimit = limit - 1
             for (i in 0 until limit) {
                 addMember(User(name = "user:$i"))
             }
@@ -55,7 +66,7 @@ class UnitTests {
     }
 
     @Test
-    fun `Verify no duplicates users in event`(){
+    fun `Verify no duplicates users in event`() {
         val event = CoffeeEvent(name = "test event")
         User(name = "test user").run {
             event.addMember(this)
