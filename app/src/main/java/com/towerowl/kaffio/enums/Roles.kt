@@ -1,4 +1,4 @@
-package com.towerowl.kaffio
+package com.towerowl.kaffio.enums
 
 enum class Roles {
     User,

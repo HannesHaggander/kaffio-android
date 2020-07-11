@@ -1,6 +1,6 @@
 package com.towerowl.kaffio.data
 
-import com.towerowl.kaffio.Roles
+import com.towerowl.kaffio.enums.Roles
 import java.util.*
 
 data class User(
