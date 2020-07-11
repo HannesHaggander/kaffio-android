@@ -1,5 +1,6 @@
 package com.towerowl.kaffio.data
 
+import android.util.Log
 import java.util.*
 
 data class CoffeeEvent(
@@ -7,7 +8,6 @@ data class CoffeeEvent(
     val creatorId: UUID,
     var name: String
 ) {
-
     init {
         if (name.isEmpty()) throw Exception("Name of event can not be empty")
     }
@@ -18,9 +18,10 @@ data class CoffeeEvent(
         private set
 
     fun setGroupLimit(user: User, limit: Int) {
-        if(user.id != creatorId) return
-        if (limit < mMembers.size)
-            members.take(members.size - limit).forEach { removeMember(it) }
+        // return if the user is not allowed to change the group settings
+        if (user.id != creatorId) return
+        // return if the new limit is less than current members in group
+        if (limit < mMembers.size) return
         groupLimit = limit
     }
 

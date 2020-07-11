@@ -27,12 +27,11 @@ class UnitTests {
      */
     @Test
     fun `validate members size if group limit lowers`() {
-        val limit = 3
         val creator = User(name = "test user")
         val event = CoffeeEvent(creatorId = creator.id, name = "test event")
-        for (i in 0..limit) event.addMember(User(name = "user:$i"))
+        for (i in 0 until 3) event.addMember(User(name = "user:$i"))
         event.setGroupLimit(creator, 1)
-        assert(event.members.size == event.groupLimit)
+        assert(event.members.size == 3)
     }
 
     /**
