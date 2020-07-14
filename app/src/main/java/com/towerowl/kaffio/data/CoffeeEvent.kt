@@ -1,6 +1,6 @@
 package com.towerowl.kaffio.data
 
-import android.util.Log
+import com.towerowl.kaffio.enums.Roles
 import java.util.*
 
 data class CoffeeEvent(
@@ -19,7 +19,7 @@ data class CoffeeEvent(
 
     fun setGroupLimit(user: User, limit: Int) {
         // return if the user is not allowed to change the group settings
-        if (user.id != creatorId) return
+        if (user.id != creatorId && user.role != Roles.Admin) return
         // return if the new limit is less than current members in group
         if (limit < mMembers.size) return
         groupLimit = limit

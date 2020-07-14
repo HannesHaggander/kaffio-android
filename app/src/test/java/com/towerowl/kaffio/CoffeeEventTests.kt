@@ -7,7 +7,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.util.*
 
-class UnitTests {
+class CoffeeEventTests {
 
     /**
      * Verify changes in user role applied correctly for user object
@@ -17,10 +17,6 @@ class UnitTests {
         assert((User(name = "a")).role == Roles.User)
         assert((User(name = "b", role = Roles.Admin)).role == Roles.Admin)
     }
-
-//    /**
-//     * Check that added events show up in brewers list
-//     */
 
     /**
      * verify safe handling of group limit reduction when more members are in
@@ -94,8 +90,15 @@ class UnitTests {
         }
     }
 
-    //- control that only the creator and admin can change an event
-
+    @Test
+    fun `Verify that admin can change anything`() {
+        val creator = User(name = "creator")
+        CoffeeEvent(creatorId = creator.id, name = "test event").also { event ->
+            event.setGroupLimit(creator, 5)
+            event.setGroupLimit(User(name = "admin", role = Roles.Admin), 10)
+            assert(event.groupLimit == 10)
+        }
+    }
 
     //- control that users are informed about updates to interested event
 
