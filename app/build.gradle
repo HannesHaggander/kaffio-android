@@ -60,4 +60,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui:$navigation_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+
+    // Mockito //
+    testImplementation "org.mockito:mockito-core:$mockito_version"
 }
