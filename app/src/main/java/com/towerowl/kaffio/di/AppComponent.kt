@@ -25,17 +25,18 @@ class ContextModule(private val context: Context) {
 }
 
 @Module(includes = [ContextModule::class])
-class DatabaseModule {
+class DatabaseModule(var localDatabase: LocalDatabase? = null) {
     companion object {
         private const val DB_NAME = "KAFFIO_DB"
     }
 
     @Provides
-    fun provideLocalDatabase(context: Context): LocalDatabase = Room.databaseBuilder(
-        context,
-        LocalDatabase::class.java,
-        DB_NAME
-    ).build()
+    fun provideLocalDatabase(context: Context): LocalDatabase =
+        localDatabase ?: Room.databaseBuilder(
+            context,
+            LocalDatabase::class.java,
+            DB_NAME
+        ).build()
 }
 
 @Module(includes = [DatabaseModule::class])

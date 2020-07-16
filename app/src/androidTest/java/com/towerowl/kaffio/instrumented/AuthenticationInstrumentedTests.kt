@@ -9,6 +9,7 @@ import com.towerowl.kaffio.data.User
 import com.towerowl.kaffio.di.AppComponent
 import com.towerowl.kaffio.di.ContextModule
 import com.towerowl.kaffio.di.DaggerAppComponent
+import com.towerowl.kaffio.di.DatabaseModule
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -30,11 +31,13 @@ class AuthenticationInstrumentedTests {
             .build()
         daggerComponent = DaggerAppComponent.builder()
             .contextModule(ContextModule(context))
+            .databaseModule(DatabaseModule(localDatabase))
             .build()
     }
 
     @After
     fun teardown() {
+        localDatabase.clearAllTables()
         localDatabase.close()
     }
 
