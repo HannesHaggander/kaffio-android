@@ -1,4 +1,4 @@
-package com.towerowl.kaffio
+package com.towerowl.kaffio.instrumented
 
 import android.content.Context
 import androidx.room.Room
@@ -6,9 +6,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.towerowl.kaffio.data.LocalDatabase
 import com.towerowl.kaffio.data.User
-import com.towerowl.kaffio.di.*
-import com.towerowl.kaffio.repositories.AuthenticationRepository
-import kotlinx.coroutines.runBlocking
+import com.towerowl.kaffio.di.AppComponent
+import com.towerowl.kaffio.di.ContextModule
+import com.towerowl.kaffio.di.DaggerAppComponent
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -29,9 +30,12 @@ class AuthenticationInstrumentedTests {
             .build()
         daggerComponent = DaggerAppComponent.builder()
             .contextModule(ContextModule(context))
-            .repositoriesModule(RepositoriesModule(localDatabase))
-            .viewModelsModule(ViewModelsModule(AuthenticationRepository(localDatabase.userDao())))
             .build()
+    }
+
+    @After
+    fun teardown() {
+        localDatabase.close()
     }
 
     /**
@@ -50,7 +54,7 @@ class AuthenticationInstrumentedTests {
     }
 
     @Test
-    fun loginWhenUserPresent(){
+    fun loginWhenUserPresent() {
         val userA = User(name = "User A")
         val userB = User(name = "User B")
 
