@@ -3,21 +3,20 @@ package com.towerowl.kaffio
 import com.towerowl.kaffio.data.User
 import com.towerowl.kaffio.data.daos.UserDao
 import com.towerowl.kaffio.repositories.AuthenticationRepository
-import org.junit.Assert
+import io.mockk.mockkClass
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
-import org.mockito.Mockito
 
 class AuthenticationTests {
 
-    @Test
-    fun `verify error on empty username login`() {
+    @ExperimentalCoroutinesApi
+    @Test(expected = Exception::class)
+    fun `verify error on empty username login`() = runBlockingTest {
         val emptyUser = User(name = "")
-        try {
-            AuthenticationRepository(Mockito.mock(UserDao::class.java))
-                .insertAuthenticationInformation(emptyUser)
-            Assert.fail()
-        } catch (e: Exception) {
-        }
+
+        AuthenticationRepository(mockkClass(UserDao::class))
+            .insertAuthenticationInformation(emptyUser)
     }
 
 }

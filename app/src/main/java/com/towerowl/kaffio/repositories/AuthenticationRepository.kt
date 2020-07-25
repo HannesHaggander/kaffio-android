@@ -5,17 +5,17 @@ import com.towerowl.kaffio.data.daos.UserDao
 
 class AuthenticationRepository(private val userDao: UserDao) {
 
-    fun getAuthenticationData(): User? {
+    suspend fun getAuthenticationData(): User? {
         return userDao.getUser()
     }
 
-    fun insertAuthenticationInformation(user: User) {
-        if (user.name.isEmpty()) throw Exception("Username has to not be empty for insertion")
+    suspend fun insertAuthenticationInformation(user: User) {
+        if (user.name.isEmpty()) throw Exception("User with empty username can not be inserted")
 
         userDao.insertUser(user)
     }
 
-    fun deleteAuthenticationInformation() {
+    suspend fun deleteAuthenticationInformation() {
         userDao.getUser()?.run { userDao.deleteUser(this) }
     }
 }

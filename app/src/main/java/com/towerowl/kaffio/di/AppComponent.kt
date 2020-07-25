@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.towerowl.kaffio.data.LocalDatabase
 import com.towerowl.kaffio.models.AuthenticationViewModel
+import com.towerowl.kaffio.models.EventsViewModel
 import com.towerowl.kaffio.repositories.AuthenticationRepository
+import com.towerowl.kaffio.repositories.EventsRepository
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -16,6 +18,9 @@ interface AppComponent {
 
     @Singleton
     fun authenticationViewModel(): AuthenticationViewModel
+
+    @Singleton
+    fun eventsViewModel(): EventsViewModel
 }
 
 @Module
@@ -44,6 +49,9 @@ class RepositoriesModule {
     @Provides
     fun provideAuthenticationRepository(localDatabase: LocalDatabase): AuthenticationRepository =
         AuthenticationRepository(localDatabase.userDao())
+
+    @Provides
+    fun provideEventsRepository(): EventsRepository = EventsRepository()
 }
 
 @Module(includes = [RepositoriesModule::class])
@@ -51,4 +59,8 @@ class ViewModelsModule {
     @Provides
     fun provideAuthenticationViewModel(authenticationRepository: AuthenticationRepository) =
         AuthenticationViewModel(authenticationRepository)
+
+    @Provides
+    fun provideEventsViewModel(eventsRepository: EventsRepository) =
+        EventsViewModel(eventsRepository)
 }

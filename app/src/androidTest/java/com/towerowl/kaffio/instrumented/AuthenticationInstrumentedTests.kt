@@ -1,6 +1,7 @@
 package com.towerowl.kaffio.instrumented
 
 import android.content.Context
+import androidx.lifecycle.viewModelScope
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -10,6 +11,8 @@ import com.towerowl.kaffio.di.AppComponent
 import com.towerowl.kaffio.di.ContextModule
 import com.towerowl.kaffio.di.DaggerAppComponent
 import com.towerowl.kaffio.di.DatabaseModule
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -38,7 +41,6 @@ class AuthenticationInstrumentedTests {
     @After
     fun teardown() {
         localDatabase.clearAllTables()
-        localDatabase.close()
     }
 
     /**
@@ -50,23 +52,28 @@ class AuthenticationInstrumentedTests {
 
         daggerComponent.run {
             authenticationViewModel().login(loginUser)
-            authenticationRepository().getAuthenticationData()?.also { user ->
-                Assert.assertEquals(user, loginUser)
-            } ?: Assert.fail("User was null after insertion")
+            authenticationViewModel().viewModelScope.launch {
+                authenticationRepository().getAuthenticationData()?.also { user ->
+                    Assert.assertEquals(user, loginUser)
+                } ?: Assert.fail("User was null after insertion")
+            }
         }
     }
 
     @Test
-    fun loginWhenUserPresent() {
+    fun loginWhenUserPresent() = runBlocking {
         val userA = User(name = "User A")
         val userB = User(name = "User B")
 
         daggerComponent.run {
             authenticationViewModel().login(userA)
             authenticationViewModel().login(userB)
-            authenticationRepository().getAuthenticationData()?.also { savedUser ->
-                Assert.assertEquals(userA, savedUser)
-            } ?: Assert.fail()
+
+            authenticationViewModel().getAuthenticationData { r ->
+                if (r.failed()) Assert.fail()
+
+                r.data?.run { Assert.assertEquals(userA, this) }
+            }
         }
     }
 
@@ -74,10 +81,10 @@ class AuthenticationInstrumentedTests {
      * Verify that logout functionality removes all the data
      */
     @Test
-    fun verifyAuthenticationDataRemovedOnLogout() {
+    fun verifyAuthenticationDataRemovedOnLogout() = runBlocking {
         daggerComponent.run {
             authenticationViewModel().logout()
-            Assert.assertNull(authenticationRepository().getAuthenticationData())
+            authenticationViewModel().getAuthenticationData { r -> Assert.assertNull(r.data) }
         }
     }
 }

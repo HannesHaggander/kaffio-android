@@ -8,4 +8,8 @@
         android:id="@+id/nav_authentication"
         android:name="com.towerowl.kaffio.ui.AuthenticationFragment" />
 
+    <fragment
+        android:id="@+id/nav_events"
+        android:name="com.towerowl.kaffio.ui.EventsFragment" />
+
 </navigation>
