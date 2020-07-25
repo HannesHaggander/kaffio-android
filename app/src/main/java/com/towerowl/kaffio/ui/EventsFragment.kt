@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.towerowl.kaffio.App
 import com.towerowl.kaffio.R
+import com.towerowl.kaffio.adapters.EventItemAdapter
 import com.towerowl.kaffio.adapters.EventItemData
-import com.towerowl.kaffio.adapters.EventItemRecyclerAdapter
 import kotlinx.android.synthetic.main.events_fragment.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -26,7 +26,7 @@ class EventsFragment : Fragment() {
 
     private val eventsRepository by lazy { App.dagger.eventsViewModel() }
     private val eventsAdapter by lazy {
-        EventItemRecyclerAdapter {
+        EventItemAdapter {
             Log.d(TAG, "EventItemRecyclerAdapter: Item pressed ")
         }
     }
@@ -48,9 +48,14 @@ class EventsFragment : Fragment() {
                 false
             )
         }
+
         lifecycleScope.launch(IO) {
             eventsRepository.getEvents().run {
-                withContext(Main) { eventsAdapter.updateData(map { EventItemData(it.name) }) }
+                withContext(Main) {
+                    eventsAdapter.updateData(map {
+                        EventItemData(it.name, it.creatorId)
+                    })
+                }
             }
         }
     }
